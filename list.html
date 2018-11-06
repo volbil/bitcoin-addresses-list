@@ -3314,7 +3314,7 @@
 							document.getElementById(address).style.background = "#90ee90"
 							ishollyfuck = true
 						}
-						document.getElementById(address).getElementsByClassName("balance")[0].innerHTML = balance + " BTC"
+						document.getElementById(address).getElementsByClassName("balance")[0].innerHTML = amountFormat(balance) + " BTC"
 					}
 
 					if (ishollyfuck) {
@@ -3373,6 +3373,12 @@
 					req.onerror = (e) => reject(Error(`Network Error: ${e}`))
 					req.send()
 				});
+			}
+
+			// Convert satoshis to readable amount
+			function amountFormat(amount) {
+				var decimals = getApi()["decimals"]
+				return (amount / Math.pow(10, 8)).toFixed(8);
 			}
 
 			// Display this nice list of addresses
