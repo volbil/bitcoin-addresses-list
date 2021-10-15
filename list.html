@@ -435,14 +435,17 @@
 			// My little piece of ∠( ᐛ 」∠)
 			function feellucky() {
 				page = ""
-				data = Math.floor(Math.random() * (92913921392193 - 1)) + 1 + "God love Bitcoins" + Date.now()
-				var result = "";
-				for (i=0; i<data.length; i++) {
-					hex = data.charCodeAt(i).toString(16)
-					result += ("000"+hex).slice(-4);
-				}
+				// data = Math.floor(Math.random() * (92913921392193 - 1)) + 1 + "God love Bitcoins" + Date.now()
 
-				hexData = bitcoin.crypto.sha256(Buffer.from(result, 'hex')).toString('hex')
+				// var result = "";
+				// for (i=0; i<data.length; i++) {
+				// 	hex = data.charCodeAt(i).toString(16)
+				// 	result += ("000"+hex).slice(-4);
+				// }
+
+				const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+				hexData = bitcoin.crypto.sha256(Buffer.from(genRanHex(32), 'hex')).toString('hex')
 				for (var i = 0; i < 64; i += 2) { page += parseInt(hexData.slice(i, i + 2), 16).toString() }
 				
 				lengthCheck = StringMath.compare(page, max) == 1
@@ -491,12 +494,13 @@
 
 					for (var i = 0; i < numbers.length; i++) {
 						priv_key = getPrivKey(numbers[i])
-						address = bitcoin.payments.p2pkh({ pubkey: bitcoin.ECPair.fromPrivateKey(Buffer.from(getPrivKey(numbers[i]), 'hex')).publicKey }).address
+						let key = bitcoin.ECPair.fromPrivateKey(Buffer.from(getPrivKey(numbers[i]), 'hex'))
+						address = bitcoin.payments.p2pkh({ pubkey: key.publicKey }).address
 						addresses.push(address)
 						addresses_html += `
 							<tr id="${address}">
 								<td>${explorer(address)}</td>
-								<td>${priv_key}</td>
+								<td>${bitcoin.ECPair.fromPrivateKey(key.privateKey).toWIF()}</td>
 								<td class="balance">Loading...</td>
 							</tr>`
 					}
